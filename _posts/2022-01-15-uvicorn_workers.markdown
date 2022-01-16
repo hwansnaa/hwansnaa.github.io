@@ -1,6 +1,7 @@
 ---
 layout: post
-title: fast api는 멀티 프로세스일까, 멀티 스레드일까?
+title: uvicorn의 worker는 멀티 프로세스일까, 멀티 스레드일까?
+toc: true
 date: 2022-01-15 19:22:23 +0900
 category: dev
 ---
