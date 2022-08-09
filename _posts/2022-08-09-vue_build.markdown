@@ -1,0 +1,51 @@
+---
+layout: post
+title: vue build시 public path
+toc: true
+date: 2022-08-09 20:43:00 +0900
+category: dev
+---
+# vue(web)와 fastapi(server)의 연동 중 이슈 정리
+
+친구들과 toy project를 진행하던 중 시간을 상당히 잡아먹은 부분이다.
+이슈는 vue web 서버와 fastapi api 서버를 연동하는 중에 일어났다.
+
+연동 과정은 대강 다음과 같았다.
+1. vue project build
+2. build된 파일을 api 프로젝트의 html 폴더로 복사
+3. fast api의 mount로 html 폴더 연동
+
+```
+...
+
+app = FastAPI()
+app.mount("/html", StaticFiles(directory=os.path.join(ROOT_PATH, "html"), html=True), name="html")
+
+...
+```
+
+하지만 결과는 원하는대로 나오지 않았다.
+
+![](../static/2022-08-09/404notfound.png)
+
+처음에는 mount의 문제나 api method의 문제인 줄 알고 코드 수정을 계속해봤지만 해결할 수 없었다..
+
+그렇게 문제 해결시도 2주차,, 한 블로그 글을 통해 api 서버의 문제가 아닌 web서버 중 build에서의 실수임을 알 수 있었다.
+
+[vue.config.js 에서 build 시에만 publicPath 변경 방법](https://kabkee.github.io/vue-cli/vue-cli-publicPath/)
+
+
+```
+# vue.config.js
+
+module.exports = {
+    publicPath: process.env.NODE_ENV === 'production'
+        ? '/html/'
+        : '/'
+}
+```
+
+위에서와같이 배포 환경에 따라 public path를 설정해주었더니 접속도 잘되고 api도 잘 동작했다 :)
+
+![](../static/2022-08-09/success.png)
+
